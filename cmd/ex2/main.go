@@ -18,6 +18,7 @@ func main() {
 	*/
 	if err != nil {
 		slog.Error("pgx.Connect", slog.Any("error", err))
+		return
 	}
 
 	defer conn.Close(ctx)
@@ -29,11 +30,13 @@ func demoCollectRows(ctx context.Context, conn *pgx.Conn) {
 	rows, err := conn.Query(ctx, "SELECT id, customer_name, status, total, created_at FROM orders;")
 	if err != nil {
 		slog.Error("Query", slog.Any("error", err))
+		return
 	}
 
 	orders, err := pgx.CollectRows(rows, pgx.RowToStructByName[domain.Order])
 	if err != nil {
 		slog.Error("CollectRows", slog.Any("error", err))
+		return
 	}
 
 	for _, order := range orders {
