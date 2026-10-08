@@ -5,18 +5,10 @@ import (
 	"fmt"
 	"log/slog"
 	"postgres-workshop/internal/config"
-	"time"
+	"postgres-workshop/internal/domain"
 
 	"github.com/jackc/pgx/v5"
 )
-
-type Order struct {
-	ID           int64     `db:"id"`
-	CustomerName string    `db:"customer_name"`
-	Status       string    `db:"status"`
-	Total        float64   `db:"total"`
-	CreatedAt    time.Time `db:"created_at"`
-}
 
 func main() {
 	ctx := context.Background()
@@ -39,7 +31,7 @@ func demoCollectRows(ctx context.Context, conn *pgx.Conn) {
 		slog.Error("Query", slog.Any("error", err))
 	}
 
-	orders, err := pgx.CollectRows(rows, pgx.RowToStructByName[Order])
+	orders, err := pgx.CollectRows(rows, pgx.RowToStructByName[domain.Order])
 	if err != nil {
 		slog.Error("CollectRows", slog.Any("error", err))
 	}
