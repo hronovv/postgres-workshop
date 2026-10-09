@@ -44,11 +44,10 @@ func main() {
 	}
 
 	demoSelectOne(ctx, pool, newID)
-	demoSelectList(ctx, pool)
+	demoSelectList(ctx, pool, new("new"), new(100))
 	demoUpdate(ctx, pool, newID)
 	demoDelete(ctx, pool, newID)
 }
-
 
 func demoInsert(ctx context.Context, pool *pgxpool.Pool) int64 {
 	insertSQL, insertArgs, err := psql.
@@ -106,11 +105,7 @@ func demoSelectOne(ctx context.Context, pool *pgxpool.Pool, id int64) {
 	)
 }
 
-
-func demoSelectList(ctx context.Context, pool *pgxpool.Pool) {
-	status := new("new")
-	minTotal := new(100.0)
-
+func demoSelectList(ctx context.Context, pool *pgxpool.Pool, status *string, minTotal *int) {
 	qb := psql.
 		Select(colID, colCustomerName, colStatus, colTotal, colCreatedAt).
 		From(tableName).
