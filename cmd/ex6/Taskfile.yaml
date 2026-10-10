@@ -1,0 +1,35 @@
+version: '3'
+
+vars:
+  GOOSE_VERSION: 'v3.28.0'
+  BIN_DIR: '{{.ROOT_DIR}}/bin'
+  GOOSE: '{{.BIN_DIR}}/goose'
+
+tasks:
+  goose:install:
+    desc: "Устанавливает goose (миграции БД)"
+    cmds:
+      - GOBIN={{.BIN_DIR}} go install github.com/pressly/goose/v3/cmd/goose@{{.GOOSE_VERSION}}
+    status:
+      - test -x {{.GOOSE}}
+
+  migrate:up:
+    desc: "Применяет все миграции"
+    deps: [goose:install]
+    dotenv: ['../../.env']
+    cmds:
+      - '{{.GOOSE}} -dir migrations postgres "$PG_DSN" up'
+
+  migrate:down:
+    desc: "Откатывает последнюю миграцию"
+    deps: [goose:install]
+    dotenv: ['../../.env']
+    cmds:
+      - '{{.GOOSE}} -dir migrations postgres "$PG_DSN" down'
+
+  migrate:status:
+    desc: "Показывает статус миграций"
+    deps: [goose:install]
+    dotenv: ['../../.env']
+    cmds:
+      - '{{.GOOSE}} -dir migrations postgres "$PG_DSN" status'
